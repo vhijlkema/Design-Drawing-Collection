@@ -537,9 +537,9 @@ function parseCSV(text) {
     vals.push(cur.trim());
     const obj = {};
     headers.forEach((h, i) => obj[h] = (vals[i] || '').replace(/^"|"$/g,'').trim());
-    // Treat photo field as valid only if it looks like a file path
-    if (obj['Photo'] && !obj['Photo'].match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
-      obj['Photo'] = '';
+    // If Photo column isn't a real file path, auto-generate from ObjectID
+    if (!obj['Photo'] || !obj['Photo'].match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
+      obj['Photo'] = obj['ObjectID'] ? 'photos/' + obj['ObjectID'] + '.jpeg' : '';
     }
     return obj;
   }).filter(p => p['ObjectID']);
@@ -716,10 +716,12 @@ function showDetail(id) {
     </div>`
   ).join('');
 
+  const desc = p['Technische Beschrijving'] || '';
   document.getElementById('detail-info').innerHTML = `
     <div class="detail-object-id">${p['ObjectID']}</div>
     <div class="detail-name">${p['Product (EN)']}</div>
     ${p['Model/Type'] ? `<div class="detail-model">${p['Model/Type']}</div>` : ''}
+    ${desc ? `<p style="font-size:14px;line-height:1.7;color:var(--ink-mid);margin:1rem 0 1.5rem;">${desc}</p>` : ''}
     <div class="detail-table">${rowsHtml}</div>`;
 
   // Related by brand
