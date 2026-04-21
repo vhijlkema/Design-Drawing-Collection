@@ -522,19 +522,25 @@ const PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentCol
 // ── CSV PARSER ────────────────────────────────────────────────
 function parseCSV(text) {
   const lines = text.trim().split('\n');
-  const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g,''));
+  // Auto-detect separator: semicolon (Dutch Excel) or comma
+  const sep = lines[0].includes(';') ? ';' : ',';
+  const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g,''));
   return lines.slice(1).map(line => {
     const vals = [];
     let cur = '', inQuote = false;
     for (let i = 0; i < line.length; i++) {
       const c = line[i];
       if (c === '"') { inQuote = !inQuote; }
-      else if (c === ',' && !inQuote) { vals.push(cur.trim()); cur = ''; }
+      else if (c === sep && !inQuote) { vals.push(cur.trim()); cur = ''; }
       else { cur += c; }
     }
     vals.push(cur.trim());
     const obj = {};
     headers.forEach((h, i) => obj[h] = (vals[i] || '').replace(/^"|"$/g,'').trim());
+    // Treat photo field as valid only if it looks like a file path
+    if (obj['Photo'] && !obj['Photo'].match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
+      obj['Photo'] = '';
+    }
     return obj;
   }).filter(p => p['ObjectID']);
 }
