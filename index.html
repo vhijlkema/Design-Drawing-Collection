@@ -17,16 +17,20 @@
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--ink); font-size: 15px; line-height: 1.6; min-height: 100vh; }
 
   /* ── HEADER ── */
-  header { background: var(--ink); color: var(--white); position: sticky; top: 0; z-index: 100; }
-  .header-top { padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 56px; border-bottom: 1px solid rgba(255,255,255,0.07); }
-  .header-brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; cursor: pointer; }
-  .header-brand .title { font-weight: 800; font-size: 16px; color: var(--white); }
-  .header-brand .subtitle { font-size: 10px; color: #6B6560; letter-spacing: 1.5px; text-transform: uppercase; }
-  .header-count { font-size: 12px; color: #6B6560; }
+  header { background: var(--ink); color: var(--white); position: sticky; top: 0; z-index: 100; transition: all 0.3s ease; }
+  .header-top { padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 72px; border-bottom: 1px solid rgba(255,255,255,0.07); transition: height 0.3s ease, opacity 0.3s ease; overflow: hidden; }
+  .header-brand { display: flex; align-items: baseline; gap: 12px; text-decoration: none; cursor: pointer; }
+  .header-brand .title { font-weight: 800; font-size: 22px; color: var(--white); letter-spacing: -0.3px; transition: font-size 0.3s ease; }
+  .header-brand .subtitle { font-size: 11px; color: #6B6560; letter-spacing: 1.5px; text-transform: uppercase; transition: opacity 0.3s ease; }
+  .header-count { font-size: 12px; color: #6B6560; transition: opacity 0.3s ease; }
   .header-nav { display: flex; padding: 0 2.5rem; height: 40px; align-items: center; gap: 0; }
   .nav-link { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #9B9589; text-transform: uppercase; padding: 0 16px; height: 40px; display: flex; align-items: center; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
   .nav-link:hover { color: var(--white); }
   .nav-link.active { color: var(--white); border-bottom-color: var(--accent); }
+
+  /* Scrolled-down state */
+  header.scrolled .header-top { height: 0; opacity: 0; pointer-events: none; }
+  header.scrolled .header-nav { border-top: none; }
 
   /* ── LAYOUT ── */
   .page-wrap { max-width: 1280px; margin: 0 auto; padding: 2rem 2.5rem 4rem; }
@@ -550,7 +554,8 @@ function renderCategory(type, name) {
 
   let headerHTML = '';
   if (type==='era') {
-    headerHTML = `<div class="era-banner"><div><div class="category-type" style="color:rgba(255,255,255,0.4)">Era</div><div class="era-banner-label">${name}</div></div><div class="era-banner-year">${name}</div></div>
+    const dates = ERA_DATES[name] || '';
+    headerHTML = `<div class="era-banner"><div><div class="category-type" style="color:rgba(255,255,255,0.4)">Era</div><div class="era-banner-label">${name}</div>${dates?`<div style="font-size:14px;color:rgba(255,255,255,0.45);margin-top:6px;font-weight:500">${dates}</div>`:''}</div><div class="era-banner-year">${name}</div></div>
       ${info.description?`<p class="category-desc">${info.description}</p>`:`<p class="category-no-desc">No description yet — add one in eras.json</p>`}`;
   } else {
     const ph = type==='designer' ? PERSON_SVG : BRAND_SVG;
@@ -591,12 +596,31 @@ function renderIndex(type) {
     const iconHTML = info.image
       ? `<img src="${safeAttr(info.image)}" alt="${safeAttr(name)}" onerror="this.style.display='none'">`
       : ph;
+    const dates = type==='eras' ? ERA_DATES[name] : '';
     return `<div class="index-card" onclick="navigate('category','${catType}','${safeJS(name)}')">
       <div class="index-card-icon">${iconHTML}</div>
-      <div><div class="index-card-name">${name}</div><div class="index-card-count">${count} object${count!==1?'s':''}</div></div>
+      <div>
+        <div class="index-card-name">${name}</div>
+        ${dates?`<div style="font-size:10px;color:var(--accent);font-weight:600;margin-top:1px">${dates}</div>`:''}
+        <div class="index-card-count">${count} object${count!==1?'s':''}</div>
+      </div>
     </div>`;
   }).join('') || '<div class="no-results">No entries found</div>';
 }
+
+// ── ERA DATE RANGES ───────────────────────────────────────────
+const ERA_DATES = {
+  'Pre-1950':           'Before 1950',
+  'Mid-Century Modern': '1950 – 1969',
+  'Late Modern':        '1970 – 1989',
+  'Postmodern':         '1990 – 1999',
+  'Digital Era':        '2000 – present',
+};
+
+// ── SCROLL-SHRINK HEADER ──────────────────────────────────────
+window.addEventListener('scroll', () => {
+  document.querySelector('header').classList.toggle('scrolled', window.scrollY > 60);
+}, { passive: true });
 
 loadData();
 </script>
