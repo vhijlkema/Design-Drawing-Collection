@@ -3,151 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Design Collection — TU Delft</title>
+<title>Design Drawing Collection — TU Delft</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&display=swap" rel="stylesheet">
 <style>
   :root {
-    --cream: #F7F4EF;
-    --ink: #1A1814;
-    --ink-mid: #5C574E;
-    --ink-light: #9B9589;
-    --border: #E0DAD0;
-    --accent: #C8411A;
-    --accent-light: #F5EDE8;
-    --white: #FFFFFF;
+    --cream: #F7F4EF; --ink: #1A1814; --ink-mid: #5C574E; --ink-light: #9B9589;
+    --border: #E0DAD0; --accent: #C8411A; --accent-light: #F5EDE8; --white: #FFFFFF;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
   body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--cream); color: var(--ink); font-size: 15px; line-height: 1.6; min-height: 100vh; }
 
-  header { background: var(--ink); color: var(--white); padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 60px; position: sticky; top: 0; z-index: 100; }
-  .header-brand { display: flex; align-items: baseline; gap: 12px; }
-  .header-brand .title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 17px; letter-spacing: 0.2px; }
-  .header-brand .subtitle { font-size: 11px; color: #9B9589; letter-spacing: 1.5px; text-transform: uppercase; font-weight: 400; }
-  .header-count { font-size: 12px; color: #9B9589; }
+  /* ── HEADER ── */
+  header { background: var(--ink); color: var(--white); position: sticky; top: 0; z-index: 100; }
+  .header-top { padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 56px; border-bottom: 1px solid rgba(255,255,255,0.07); }
+  .header-brand { display: flex; align-items: baseline; gap: 10px; text-decoration: none; cursor: pointer; }
+  .header-brand .title { font-weight: 800; font-size: 16px; color: var(--white); }
+  .header-brand .subtitle { font-size: 10px; color: #6B6560; letter-spacing: 1.5px; text-transform: uppercase; }
+  .header-count { font-size: 12px; color: #6B6560; }
+  .header-nav { display: flex; padding: 0 2.5rem; height: 40px; align-items: center; gap: 0; }
+  .nav-link { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; color: #9B9589; text-transform: uppercase; padding: 0 16px; height: 40px; display: flex; align-items: center; cursor: pointer; border-bottom: 2px solid transparent; transition: color 0.15s, border-color 0.15s; }
+  .nav-link:hover { color: var(--white); }
+  .nav-link.active { color: var(--white); border-bottom-color: var(--accent); }
 
+  /* ── LAYOUT ── */
   .page-wrap { max-width: 1280px; margin: 0 auto; padding: 2rem 2.5rem 4rem; }
+  @media (max-width: 820px) { .page-wrap { padding: 1.5rem 1.25rem 3rem; } .header-top, .header-nav { padding: 0 1.25rem; } }
 
-  .controls-bar { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 1.75rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
-  .search-wrap { position: relative; flex: 1; min-width: 220px; }
-  .search-icon { position: absolute; left: 12px; top: 50%; transform: translateY(-50%); color: var(--ink-light); pointer-events: none; font-size: 14px; }
-  .search-input { width: 100%; padding: 9px 12px 9px 36px; border: 1px solid var(--border); border-radius: 6px; background: var(--white); font-family: 'Barlow', sans-serif; font-size: 14px; color: var(--ink); outline: none; transition: border-color 0.15s; }
+  /* ── CONTROLS ── */
+  .controls-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
+  .search-wrap { position: relative; flex: 1; min-width: 200px; }
+  .search-icon { position: absolute; left: 11px; top: 50%; transform: translateY(-50%); color: var(--ink-light); pointer-events: none; font-size: 13px; }
+  .search-input { width: 100%; padding: 8px 12px 8px 32px; border: 1px solid var(--border); border-radius: 6px; background: var(--white); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 13px; color: var(--ink); outline: none; transition: border-color 0.15s; }
   .search-input:focus { border-color: var(--ink-mid); }
   .search-input::placeholder { color: var(--ink-light); }
-  .filter-select { padding: 9px 28px 9px 12px; border: 1px solid var(--border); border-radius: 6px; background: var(--white); font-family: 'Barlow', sans-serif; font-size: 13px; color: var(--ink); cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239B9589' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; transition: border-color 0.15s; }
+
+  .filter-wrap { position: relative; display: flex; align-items: center; }
+  .filter-select { padding: 8px 32px 8px 11px; border: 1px solid var(--border); border-radius: 6px; background: var(--white); font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: var(--ink); cursor: pointer; outline: none; appearance: none; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6' fill='none'%3E%3Cpath d='M1 1l4 4 4-4' stroke='%239B9589' stroke-width='1.5' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 10px center; transition: all 0.15s; }
   .filter-select:focus { border-color: var(--ink-mid); }
-  .filter-select.active { border-color: var(--accent); color: var(--accent); background-color: var(--accent-light); }
-  .clear-btn { padding: 9px 14px; border: 1px solid var(--border); border-radius: 6px; background: transparent; font-family: 'Barlow', sans-serif; font-size: 13px; color: var(--ink-mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .clear-btn:hover { background: var(--white); border-color: var(--ink-mid); color: var(--ink); }
+  .filter-select.active { border-color: var(--accent); color: var(--accent); background-color: var(--accent-light); padding-right: 44px; }
+  .filter-clear-x { display: none; position: absolute; right: 24px; top: 50%; transform: translateY(-50%); background: none; border: none; cursor: pointer; color: var(--accent); font-size: 14px; line-height: 1; padding: 2px 4px; font-weight: 700; }
+  .filter-wrap.has-value .filter-clear-x { display: block; }
 
-  .result-info { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 1.25rem; }
-  .result-count { font-size: 13px; color: var(--ink-mid); }
-  .active-filters { display: flex; gap: 6px; flex-wrap: wrap; }
-  .filter-pill { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; padding: 3px 10px; background: var(--accent-light); color: var(--accent); border-radius: 20px; cursor: pointer; border: 1px solid #E8C4B6; }
-  .filter-pill:hover { background: #EEDDD8; }
+  .clear-all-btn { padding: 8px 12px; border: 1px solid var(--border); border-radius: 6px; background: transparent; font-family: 'Plus Jakarta Sans', sans-serif; font-size: 12px; color: var(--ink-mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
+  .clear-all-btn:hover { background: var(--white); border-color: var(--ink-mid); color: var(--ink); }
 
-  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 16px; }
+  /* Active filter chips row */
+  .active-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 1rem; min-height: 0; }
+  .chip { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 600; padding: 4px 8px 4px 10px; background: var(--accent-light); color: var(--accent); border-radius: 20px; border: 1px solid #E8C4B6; }
+  .chip-x { background: none; border: none; cursor: pointer; color: var(--accent); font-size: 13px; font-weight: 700; line-height: 1; padding: 0 2px; }
+
+  .result-count { font-size: 12px; color: var(--ink-light); margin-bottom: 1.25rem; }
+
+  /* ── GRID ── */
+  .product-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); gap: 16px; }
   .product-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; }
   .product-card:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(26,24,20,0.08); border-color: #C8C0B4; }
-  .card-image { width: 100%; aspect-ratio: 3/4; object-fit: cover; background: var(--cream); display: block; }
-  .card-image-placeholder { width: 100%; aspect-ratio: 3/4; background: var(--cream); display: flex; align-items: center; justify-content: center; }
-  .card-image-placeholder svg { width: 32px; height: 32px; opacity: 0.2; }
-  .card-body { padding: 12px 14px 14px; }
-  .card-id { font-size: 10px; color: var(--ink-light); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px; }
-  .card-name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 14px; line-height: 1.25; margin-bottom: 4px; color: var(--ink); }
-  .card-designer { font-size: 12px; color: var(--ink-mid); margin-bottom: 8px; }
-  .card-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-  .tag { font-size: 10px; padding: 2px 8px; border-radius: 20px; border: 1px solid var(--border); color: var(--ink-mid); background: var(--cream); cursor: pointer; transition: all 0.12s; white-space: nowrap; }
+  .card-img-wrap { width: 100%; aspect-ratio: 3/4; background: var(--cream); overflow: hidden; position: relative; }
+  .card-img-wrap canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .card-img-wrap .card-img-fallback { display: none; width: 100%; height: 100%; align-items: center; justify-content: center; }
+  .card-img-wrap .card-img-fallback svg { width: 32px; height: 32px; opacity: 0.2; }
+  .card-body { padding: 11px 13px 13px; }
+  .card-id { font-size: 10px; color: var(--ink-light); font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 3px; }
+  .card-name { font-weight: 800; font-size: 13px; line-height: 1.25; margin-bottom: 2px; color: var(--ink); }
+  .card-sub { font-size: 11px; color: var(--ink-mid); margin-bottom: 8px; }
+  .card-tags { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tag { font-size: 10px; padding: 2px 7px; border-radius: 20px; border: 1px solid var(--border); color: var(--ink-mid); background: var(--cream); cursor: pointer; transition: all 0.12s; white-space: nowrap; }
   .tag:hover { border-color: var(--ink-mid); color: var(--ink); }
 
-  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 13px; color: var(--ink-mid); margin-bottom: 1.5rem; }
+  /* ── BREADCRUMB ── */
+  .breadcrumb { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-mid); margin-bottom: 1.5rem; flex-wrap: wrap; }
   .breadcrumb a { color: var(--ink-mid); text-decoration: none; cursor: pointer; }
   .breadcrumb a:hover { color: var(--accent); }
   .breadcrumb span { color: var(--ink-light); }
 
-  .detail-layout { display: grid; grid-template-columns: 420px 1fr; gap: 3rem; align-items: start; }
-  @media (max-width: 820px) { .detail-layout { grid-template-columns: 1fr; gap: 1.5rem; } .page-wrap { padding: 1.5rem 1.25rem 3rem; } header { padding: 0 1.25rem; } }
-  .detail-image-wrap { position: sticky; top: 80px; }
-  .detail-image { width: 100%; aspect-ratio: 3/4; object-fit: cover; border-radius: 10px; border: 1px solid var(--border); background: var(--cream); display: block; }
+  /* ── PRODUCT DETAIL ── */
+  .detail-layout { display: grid; grid-template-columns: 380px 1fr; gap: 3rem; align-items: start; }
+  @media (max-width: 820px) { .detail-layout { grid-template-columns: 1fr; gap: 1.5rem; } }
+  .detail-image-wrap { position: sticky; top: 100px; }
+  .detail-img-canvas-wrap { width: 100%; aspect-ratio: 3/4; border-radius: 10px; border: 1px solid var(--border); background: var(--cream); overflow: hidden; }
+  .detail-img-canvas-wrap canvas { width: 100%; height: 100%; object-fit: cover; display: block; }
   .detail-image-placeholder { width: 100%; aspect-ratio: 3/4; border-radius: 10px; border: 1px solid var(--border); background: var(--cream); display: flex; align-items: center; justify-content: center; }
   .detail-image-placeholder svg { width: 56px; height: 56px; opacity: 0.15; }
-  .detail-object-id { font-size: 11px; color: var(--ink-light); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 8px; font-weight: 700; }
-  .detail-name { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 36px; line-height: 1.05; margin-bottom: 4px; }
-  .detail-model { font-size: 15px; color: var(--ink-mid); margin-bottom: 1.75rem; }
-  .detail-table { border-top: 1px solid var(--border); margin-bottom: 1.75rem; }
-  .detail-row { display: grid; grid-template-columns: 110px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--border); font-size: 14px; }
-  .detail-row-label { color: var(--ink-light); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; padding-top: 2px; }
+  .detail-object-id { font-size: 10px; color: var(--ink-light); letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px; font-weight: 700; }
+  .detail-name { font-weight: 800; font-size: 34px; line-height: 1.05; margin-bottom: 4px; }
+  .detail-model { font-size: 14px; color: var(--ink-mid); margin-bottom: 1.5rem; }
+  .detail-table { border-top: 1px solid var(--border); margin-bottom: 1.5rem; }
+  .detail-row { display: grid; grid-template-columns: 100px 1fr; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .detail-row-label { color: var(--ink-light); font-weight: 700; font-size: 10px; text-transform: uppercase; letter-spacing: 0.8px; padding-top: 1px; }
   .detail-link { color: var(--ink); text-decoration: underline; text-decoration-color: var(--border); cursor: pointer; transition: all 0.12s; }
   .detail-link:hover { text-decoration-color: var(--accent); color: var(--accent); }
+  .related-section { margin-top: 3rem; }
+  .related-title { font-weight: 800; font-size: 18px; margin-bottom: 1rem; }
 
-  .related-section { margin-top: 3.5rem; }
-  .related-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 20px; margin-bottom: 1rem; }
-
-  /* CATEGORY PAGE */
-  .category-image { width: 160px; height: 160px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); background: var(--white); padding: 20px; display: block; margin-bottom: 1.25rem; }
-  .category-image-placeholder { width: 100px; height: 100px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
-  .category-image-placeholder svg { width: 36px; height: 36px; opacity: 0.15; }
-  .category-type { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-light); margin-bottom: 6px; }
-  .category-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 44px; line-height: 1; margin-bottom: 1rem; }
-  .category-desc { font-size: 15px; line-height: 1.7; color: var(--ink-mid); max-width: 640px; margin-bottom: 2rem; }
-  .category-no-desc { font-size: 13px; color: var(--ink-light); font-style: italic; margin-bottom: 2rem; }
-  .category-section-title { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 700; font-size: 18px; margin-bottom: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--ink-mid); }
-
+  /* ── CATEGORY PAGES ── */
+  .category-image { width: 150px; height: 150px; object-fit: contain; border-radius: 10px; border: 1px solid var(--border); background: var(--white); padding: 18px; display: block; margin-bottom: 1.25rem; }
+  .category-image-placeholder { width: 90px; height: 90px; border-radius: 10px; border: 1px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; margin-bottom: 1.25rem; }
+  .category-image-placeholder svg { width: 34px; height: 34px; opacity: 0.15; }
+  .category-type { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-light); margin-bottom: 6px; }
+  .category-title { font-weight: 800; font-size: 42px; line-height: 1; margin-bottom: 1rem; }
+  .category-desc { font-size: 14px; line-height: 1.75; color: var(--ink-mid); max-width: 620px; margin-bottom: 2rem; }
+  .category-no-desc { font-size: 12px; color: var(--ink-light); font-style: italic; margin-bottom: 2rem; }
+  .category-section-title { font-weight: 700; font-size: 16px; margin-bottom: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--ink-mid); }
   .era-banner { background: var(--ink); color: var(--white); border-radius: 10px; padding: 2.5rem; margin-bottom: 2rem; display: flex; align-items: flex-end; justify-content: space-between; overflow: hidden; }
-  .era-banner-label { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 44px; }
-  .era-banner-year { font-family: 'Plus Jakarta Sans', sans-serif; font-weight: 800; font-size: 96px; line-height: 1; color: rgba(255,255,255,0.1); }
+  .era-banner-label { font-weight: 800; font-size: 40px; }
+  .era-banner-year { font-weight: 800; font-size: 90px; line-height: 1; color: rgba(255,255,255,0.08); }
 
+  /* ── CATEGORY INDEX PAGES ── */
+  .index-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 12px; }
+  .index-card { background: var(--white); border: 1px solid var(--border); border-radius: 10px; padding: 1.25rem; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, border-color 0.15s; display: flex; align-items: center; gap: 14px; }
+  .index-card:hover { transform: translateY(-1px); box-shadow: 0 4px 16px rgba(26,24,20,0.07); border-color: #C8C0B4; }
+  .index-card-icon { width: 44px; height: 44px; border-radius: 8px; border: 1px solid var(--border); background: var(--cream); display: flex; align-items: center; justify-content: center; flex-shrink: 0; overflow: hidden; }
+  .index-card-icon img { width: 100%; height: 100%; object-fit: contain; padding: 6px; }
+  .index-card-icon svg { width: 20px; height: 20px; opacity: 0.25; }
+  .index-card-name { font-weight: 700; font-size: 13px; line-height: 1.2; }
+  .index-card-count { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
+  .page-title { font-weight: 800; font-size: 28px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--border); }
+
+  /* ── MISC ── */
   .empty-state { text-align: center; padding: 5rem 2rem; color: var(--ink-light); }
-  .empty-state p { font-size: 14px; margin-top: 8px; }
-  .loading-state { text-align: center; padding: 5rem 2rem; color: var(--ink-light); font-size: 14px; }
-  .no-results { text-align: center; padding: 3rem; color: var(--ink-mid); font-size: 14px; grid-column: 1/-1; }
-
-  footer { border-top: 1px solid var(--border); padding: 1.5rem 2.5rem; text-align: center; font-size: 12px; color: var(--ink-light); background: var(--cream); }
+  .loading-state { text-align: center; padding: 5rem 2rem; color: var(--ink-light); font-size: 14px; grid-column: 1/-1; }
+  .no-results { text-align: center; padding: 3rem; color: var(--ink-mid); font-size: 13px; grid-column: 1/-1; }
+  footer { border-top: 1px solid var(--border); padding: 1.5rem 2.5rem; text-align: center; font-size: 11px; color: var(--ink-light); background: var(--cream); }
 </style>
 </head>
 <body>
 
 <header>
-  <div class="header-brand">
-    <span class="title">Design Collection</span>
-    <span class="subtitle">TU Delft · IDE</span>
+  <div class="header-top">
+    <div class="header-brand" onclick="navigate('products')">
+      <span class="title">Design Drawing Collection</span>
+      <span class="subtitle">TU Delft · IDE</span>
+    </div>
+    <span class="header-count" id="header-count"></span>
   </div>
-  <span class="header-count" id="header-count"></span>
+  <nav class="header-nav">
+    <span class="nav-link" id="nav-products" onclick="navigate('products')">Products</span>
+    <span class="nav-link" id="nav-brands" onclick="navigate('brands')">Brands</span>
+    <span class="nav-link" id="nav-designers" onclick="navigate('designers')">Designers</span>
+    <span class="nav-link" id="nav-eras" onclick="navigate('eras')">Eras</span>
+  </nav>
 </header>
 
 <div class="page-wrap">
 
-  <!-- GRID VIEW -->
-  <div id="grid-view">
+  <!-- PRODUCTS / GRID VIEW -->
+  <div id="view-products" style="display:none">
     <div class="controls-bar">
       <div class="search-wrap">
         <span class="search-icon">⌕</span>
-        <input class="search-input" type="text" id="search" placeholder="Search by name, ID, designer, brand…" oninput="applyFilters()">
+        <input class="search-input" type="text" id="search" placeholder="Search by name, ID, model, brand…" oninput="applyFilters()">
       </div>
-      <select class="filter-select" id="f-designer" onchange="applyFilters()"><option value="">All designers</option></select>
-      <select class="filter-select" id="f-brand" onchange="applyFilters()"><option value="">All brands</option></select>
-      <select class="filter-select" id="f-era" onchange="applyFilters()"><option value="">All eras</option></select>
-      <select class="filter-select" id="f-country" onchange="applyFilters()"><option value="">All countries</option></select>
-      <button class="clear-btn" onclick="clearFilters()" id="clear-btn" style="display:none">✕ Clear</button>
+      <div class="filter-wrap" id="wrap-designer">
+        <select class="filter-select" id="f-designer" onchange="applyFilters()"><option value="">All designers</option></select>
+        <button class="filter-clear-x" onclick="clearOne('designer')" title="Clear">✕</button>
+      </div>
+      <div class="filter-wrap" id="wrap-brand">
+        <select class="filter-select" id="f-brand" onchange="applyFilters()"><option value="">All brands</option></select>
+        <button class="filter-clear-x" onclick="clearOne('brand')" title="Clear">✕</button>
+      </div>
+      <div class="filter-wrap" id="wrap-era">
+        <select class="filter-select" id="f-era" onchange="applyFilters()"><option value="">All eras</option></select>
+        <button class="filter-clear-x" onclick="clearOne('era')" title="Clear">✕</button>
+      </div>
+      <div class="filter-wrap" id="wrap-country">
+        <select class="filter-select" id="f-country" onchange="applyFilters()"><option value="">All countries</option></select>
+        <button class="filter-clear-x" onclick="clearOne('country')" title="Clear">✕</button>
+      </div>
+      <button class="clear-all-btn" onclick="clearFilters()" id="clear-btn" style="display:none">Clear all</button>
     </div>
-    <div class="result-info">
-      <span class="result-count" id="result-count"></span>
-      <div class="active-filters" id="active-filters"></div>
-    </div>
+    <div class="active-chips" id="active-chips"></div>
+    <div class="result-count" id="result-count"></div>
     <div id="grid-container" class="product-grid">
       <div class="loading-state">Loading collection…</div>
     </div>
   </div>
 
   <!-- PRODUCT DETAIL VIEW -->
-  <div id="detail-view" style="display:none">
-    <div class="breadcrumb">
-      <a onclick="showGrid()">← Collection</a>
-      <span>/</span>
-      <span id="breadcrumb-name"></span>
-    </div>
+  <div id="view-detail" style="display:none">
+    <div class="breadcrumb" id="detail-breadcrumb"></div>
     <div class="detail-layout">
       <div class="detail-image-wrap" id="detail-image-wrap"></div>
       <div id="detail-info"></div>
@@ -155,20 +191,34 @@
     <div class="related-section" id="related-section"></div>
   </div>
 
-  <!-- CATEGORY VIEW -->
-  <div id="category-view" style="display:none">
-    <div class="breadcrumb">
-      <a onclick="showGrid()">← Collection</a>
-      <span>/</span>
-      <span id="cat-breadcrumb"></span>
-    </div>
-    <div id="cat-header" class="category-header"></div>
+  <!-- CATEGORY DETAIL VIEW (brand / designer / era) -->
+  <div id="view-category" style="display:none">
+    <div class="breadcrumb" id="cat-breadcrumb-wrap"></div>
+    <div id="cat-header"></div>
     <div id="cat-grid" class="product-grid"></div>
+  </div>
+
+  <!-- BRANDS INDEX -->
+  <div id="view-brands" style="display:none">
+    <div class="page-title">Brands</div>
+    <div id="brands-grid" class="index-grid"></div>
+  </div>
+
+  <!-- DESIGNERS INDEX -->
+  <div id="view-designers" style="display:none">
+    <div class="page-title">Designers</div>
+    <div id="designers-grid" class="index-grid"></div>
+  </div>
+
+  <!-- ERAS INDEX -->
+  <div id="view-eras" style="display:none">
+    <div class="page-title">Eras</div>
+    <div id="eras-grid" class="index-grid"></div>
   </div>
 
 </div>
 
-<footer>Design Collection Archive · Faculty of Industrial Design Engineering · TU Delft</footer>
+<footer>Design Drawing Collection Archive · Faculty of Industrial Design Engineering · TU Delft</footer>
 
 <script>
 let allProducts = [];
@@ -178,107 +228,95 @@ let metadata = { brands: {}, designers: {}, eras: {} };
 const PLACEHOLDER_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>`;
 const PERSON_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>`;
 const BRAND_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 7V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v2"/></svg>`;
+const ERA_SVG = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 3"/></svg>`;
 
-function safeAttr(str) { return (str||'').replace(/'/g,"\\'").replace(/"/g,'&quot;'); }
+function safeAttr(s) { return (s||'').replace(/&/g,'&amp;').replace(/'/g,'&#39;').replace(/"/g,'&quot;'); }
+function safeJS(s) { return (s||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'"); }
 
-// ── EXIF ROTATION FIX ─────────────────────────────────────────
-// Reads EXIF orientation tag and applies CSS transform to correct rotation.
-// Needed because some browsers ignore image-orientation for certain JPEG files.
-function fixImageRotation(img) {
-  if (!img.src || img.dataset.rotFixed) return;
-  img.dataset.rotFixed = '1';
-  const xhr = new XMLHttpRequest();
-  xhr.open('GET', img.src, true);
-  xhr.responseType = 'arraybuffer';
-  xhr.onload = function() {
-    const view = new DataView(xhr.response);
-    if (view.getUint16(0, false) !== 0xFFD8) return; // not a JPEG
-    let offset = 2, orientation = 1;
-    while (offset < view.byteLength) {
-      if (view.getUint16(offset, false) === 0xFFE1) {
-        if (view.getUint32(offset + 4, false) !== 0x45786966) break;
-        const little = view.getUint16(offset + 10, false) === 0x4949;
-        offset += 12;
-        const tags = view.getUint16(offset, little);
-        offset += 2;
-        for (let i = 0; i < tags; i++) {
-          if (view.getUint16(offset + i * 12, little) === 0x0112) {
-            orientation = view.getUint16(offset + i * 12 + 8, little);
-            break;
-          }
-        }
-        break;
-      }
-      offset += 2 + view.getUint16(offset + 2, false);
-    }
-    const transforms = {
-      1: '', 2: 'scaleX(-1)', 3: 'rotate(180deg)',
-      4: 'scaleX(-1) rotate(180deg)', 5: 'scaleX(-1) rotate(270deg)',
-      6: 'rotate(90deg)', 7: 'scaleX(-1) rotate(90deg)', 8: 'rotate(270deg)'
-    };
-    const needsSwap = [5,6,7,8].includes(orientation);
-    if (transforms[orientation]) {
-      img.style.transform = transforms[orientation];
-      // When rotating 90/270deg, swap width/height so image fills the container
-      if (needsSwap) {
-        img.style.width = img.offsetHeight + 'px';
-        img.style.height = img.offsetWidth + 'px';
-        img.style.maxWidth = 'none';
-      }
-    }
-  };
-  xhr.send();
-}
-
-function fixAllImages() {
-  document.querySelectorAll('img.card-image, img.detail-image').forEach(fixImageRotation);
-}
-
-
-
-// ── CSV PARSER ────────────────────────────────────────────────
+// ── CSV PARSER ─────────────────────────────────────────────────
 function parseCSV(text) {
   const lines = text.trim().split('\n');
   const sep = lines[0].includes(';') ? ';' : ',';
   const headers = lines[0].split(sep).map(h => h.trim().replace(/^"|"$/g,''));
   return lines.slice(1).map(line => {
-    const vals = []; let cur = '', inQuote = false;
+    const vals = []; let cur = '', inQ = false;
     for (let i = 0; i < line.length; i++) {
       const c = line[i];
-      if (c === '"') { inQuote = !inQuote; }
-      else if (c === sep && !inQuote) { vals.push(cur.trim()); cur = ''; }
-      else { cur += c; }
+      if (c === '"') { inQ = !inQ; }
+      else if (c === sep && !inQ) { vals.push(cur.trim()); cur = ''; }
+      else cur += c;
     }
     vals.push(cur.trim());
     const obj = {};
     headers.forEach((h,i) => obj[h] = (vals[i]||'').replace(/^"|"$/g,'').trim());
-    if (!obj['Photo'] || !obj['Photo'].match(/\.(jpg|jpeg|png|webp|gif)$/i)) {
+    if (!obj['Photo'] || !obj['Photo'].match(/\.(jpg|jpeg|png|webp|gif)$/i))
       obj['Photo'] = obj['ObjectID'] ? 'photos/' + obj['ObjectID'] + '.jpeg' : '';
-    }
     return obj;
   }).filter(p => p['ObjectID']);
 }
 
-// ── LOAD DATA ─────────────────────────────────────────────────
+// ── LOAD DATA ──────────────────────────────────────────────────
 async function loadData() {
   try {
     const res = await fetch('products.csv?v=' + Date.now());
-    const text = await res.text();
-    allProducts = parseCSV(text);
+    allProducts = parseCSV(await res.text());
     await Promise.allSettled([
-      fetch('brands.json').then(r => r.ok ? r.json() : {}).then(d => { metadata.brands = d||{}; }),
-      fetch('designers.json').then(r => r.ok ? r.json() : {}).then(d => { metadata.designers = d||{}; }),
-      fetch('eras.json').then(r => r.ok ? r.json() : {}).then(d => { metadata.eras = d||{}; }),
+      fetch('brands.json').then(r=>r.ok?r.json():{}).then(d=>{metadata.brands=d||{};}),
+      fetch('designers.json').then(r=>r.ok?r.json():{}).then(d=>{metadata.designers=d||{};}),
+      fetch('eras.json').then(r=>r.ok?r.json():{}).then(d=>{metadata.eras=d||{};}),
     ]);
-    buildFilters(); applyFilters();
+    buildFilters();
     document.getElementById('header-count').textContent = allProducts.length + ' objects';
+    routeFromHash();
   } catch(e) {
     document.getElementById('grid-container').innerHTML =
-      '<div class="empty-state"><strong>Could not load products.csv</strong><p>Make sure products.csv is in the same folder as index.html</p></div>';
+      '<div class="empty-state"><strong>Could not load products.csv</strong></div>';
+    showView('products');
   }
 }
 
-// ── FILTERS ───────────────────────────────────────────────────
+// ── HASH-BASED ROUTING ─────────────────────────────────────────
+function navigate(view, type, name) {
+  let hash = '#' + view;
+  if (type) hash += '/' + encodeURIComponent(type);
+  if (name) hash += '/' + encodeURIComponent(name);
+  history.pushState(null, '', hash);
+  routeFromHash();
+}
+
+function routeFromHash() {
+  const hash = location.hash.slice(1) || 'products';
+  const parts = hash.split('/').map(decodeURIComponent);
+  const view = parts[0] || 'products';
+
+  setNavActive(view === 'category' ? parts[1] : view);
+
+  if (view === 'products') { showView('products'); applyFilters(); }
+  else if (view === 'detail') { showView('detail'); renderDetail(parts[1]); }
+  else if (view === 'category') { showView('category'); renderCategory(parts[1], parts[2]); }
+  else if (view === 'brands') { showView('brands'); renderIndex('brands'); }
+  else if (view === 'designers') { showView('designers'); renderIndex('designers'); }
+  else if (view === 'eras') { showView('eras'); renderIndex('eras'); }
+  else { showView('products'); applyFilters(); }
+  window.scrollTo(0,0);
+}
+
+function setNavActive(view) {
+  ['products','brands','designers','eras'].forEach(v => {
+    const el = document.getElementById('nav-' + v);
+    if (el) el.classList.toggle('active', v === view);
+  });
+}
+
+window.addEventListener('popstate', routeFromHash);
+
+// ── VIEWS ──────────────────────────────────────────────────────
+const VIEWS = ['products','detail','category','brands','designers','eras'];
+function showView(v) {
+  VIEWS.forEach(id => { const el = document.getElementById('view-'+id); if(el) el.style.display = id===v ? 'block' : 'none'; });
+}
+
+// ── FILTERS ────────────────────────────────────────────────────
 function unique(key) { return [...new Set(allProducts.map(p=>p[key]).filter(Boolean))].sort(); }
 function populateSelect(id, key, label) {
   const sel = document.getElementById(id), cur = sel.value;
@@ -290,7 +328,7 @@ function buildFilters() {
   populateSelect('f-era','Era','eras');
   populateSelect('f-country','Country','countries');
 }
-function getFilters() {
+function getF() {
   return {
     search: document.getElementById('search').value.toLowerCase().trim(),
     designer: document.getElementById('f-designer').value,
@@ -300,12 +338,19 @@ function getFilters() {
   };
 }
 function applyFilters() {
-  const f = getFilters();
+  const f = getF();
   const hasAny = f.search||f.designer||f.brand||f.era||f.country;
   document.getElementById('clear-btn').style.display = hasAny ? 'block' : 'none';
-  ['f-designer','f-brand','f-era','f-country'].forEach(id => {
-    document.getElementById(id).classList.toggle('active', !!document.getElementById(id).value);
+
+  // Update filter select styling + show/hide ✕ buttons
+  [['designer','wrap-designer'],['brand','wrap-brand'],['era','wrap-era'],['country','wrap-country']].forEach(([k,wid])=>{
+    const sel = document.getElementById('f-'+k);
+    const wrap = document.getElementById(wid);
+    const active = !!sel.value;
+    sel.classList.toggle('active', active);
+    wrap.classList.toggle('has-value', active);
   });
+
   filteredProducts = allProducts.filter(p => {
     if (f.search) { const hay=[p['ObjectID'],p['Product (EN)'],p['Designer'],p['Brand'],p['Model/Type'],p['Country']].join(' ').toLowerCase(); if(!hay.includes(f.search)) return false; }
     if (f.designer && p['Designer']!==f.designer) return false;
@@ -314,43 +359,108 @@ function applyFilters() {
     if (f.country && p['Country']!==f.country) return false;
     return true;
   });
-  renderGrid(); renderActivePills(f);
-}
-function clearFilters() {
-  document.getElementById('search').value='';
-  ['f-designer','f-brand','f-era','f-country'].forEach(id=>document.getElementById(id).value='');
-  applyFilters();
-}
-function setFilterAndGrid(key, val) {
-  const map={Designer:'f-designer',Brand:'f-brand',Era:'f-era',Country:'f-country'};
-  if(map[key]){document.getElementById(map[key]).value=val; applyFilters(); showGrid();}
-}
-function renderActivePills(f) {
-  const pills=[];
-  if(f.designer) pills.push(`<span class="filter-pill" onclick="setFilterAndGrid('Designer','')">Designer: ${f.designer} ✕</span>`);
-  if(f.brand) pills.push(`<span class="filter-pill" onclick="setFilterAndGrid('Brand','')">Brand: ${f.brand} ✕</span>`);
-  if(f.era) pills.push(`<span class="filter-pill" onclick="setFilterAndGrid('Era','')">Era: ${f.era} ✕</span>`);
-  if(f.country) pills.push(`<span class="filter-pill" onclick="setFilterAndGrid('Country','')">Country: ${f.country} ✕</span>`);
-  document.getElementById('active-filters').innerHTML = pills.join('');
+  renderGrid();
+  renderChips(f);
 }
 
-// ── PRODUCT CARDS ─────────────────────────────────────────────
-function productCardHTML(p, minimal) {
-  const img = p['Photo']
-    ? `<img class="card-image" src="${p['Photo']}" alt="${safeAttr(p['Product (EN)'])}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="card-image-placeholder" style="display:none">${PLACEHOLDER_SVG}</div>`
-    : `<div class="card-image-placeholder">${PLACEHOLDER_SVG}</div>`;
-  const tags = minimal ? '' : `<div class="card-tags">
-    ${p['Brand']?`<span class="tag" onclick="event.stopPropagation();showCategory('brand','${safeAttr(p['Brand'])}')">${p['Brand']}</span>`:''}
-    ${p['Era']?`<span class="tag" onclick="event.stopPropagation();showCategory('era','${safeAttr(p['Era'])}')">${p['Era']}</span>`:''}
-    ${p['Country']?`<span class="tag" onclick="event.stopPropagation();setFilterAndGrid('Country','${safeAttr(p['Country'])}')">${p['Country']}</span>`:''}
-  </div>`;
-  return `<div class="product-card" onclick="showDetail('${safeAttr(p['ObjectID'])}')">
-    ${img}
+function clearOne(key) {
+  document.getElementById('f-'+key).value = '';
+  applyFilters();
+}
+function clearFilters() {
+  document.getElementById('search').value = '';
+  ['designer','brand','era','country'].forEach(k => document.getElementById('f-'+k).value='');
+  applyFilters();
+}
+function setFilter(key, val) {
+  const m = {Designer:'f-designer',Brand:'f-brand',Era:'f-era',Country:'f-country'};
+  if (m[key]) { document.getElementById(m[key]).value=val; navigate('products'); applyFilters(); }
+}
+function renderChips(f) {
+  const chips = [];
+  if (f.designer) chips.push(`<span class="chip">Designer: ${f.designer}<button class="chip-x" onclick="clearOne('designer')">✕</button></span>`);
+  if (f.brand)    chips.push(`<span class="chip">Brand: ${f.brand}<button class="chip-x" onclick="clearOne('brand')">✕</button></span>`);
+  if (f.era)      chips.push(`<span class="chip">Era: ${f.era}<button class="chip-x" onclick="clearOne('era')">✕</button></span>`);
+  if (f.country)  chips.push(`<span class="chip">Country: ${f.country}<button class="chip-x" onclick="clearOne('country')">✕</button></span>`);
+  document.getElementById('active-chips').innerHTML = chips.join('');
+}
+
+// ── IMAGE ROTATION FIX via Canvas ─────────────────────────────
+// Draws JPEG onto canvas with correct EXIF orientation applied.
+function readExifOrientation(buffer) {
+  const view = new DataView(buffer);
+  if (view.getUint16(0,false) !== 0xFFD8) return 1;
+  let offset = 2;
+  while (offset < view.byteLength - 2) {
+    const marker = view.getUint16(offset,false);
+    if (marker === 0xFFE1) {
+      if (view.getUint32(offset+4,false) !== 0x45786966) return 1;
+      const little = view.getUint16(offset+10,false) === 0x4949;
+      const ifdOffset = offset + 10 + view.getUint32(offset+14,little);
+      const numTags = view.getUint16(ifdOffset,little);
+      for (let i=0; i<numTags; i++) {
+        const tagOffset = ifdOffset + 2 + i*12;
+        if (view.getUint16(tagOffset,little) === 0x0112)
+          return view.getUint16(tagOffset+8,little);
+      }
+      return 1;
+    }
+    if ((marker & 0xFF00) !== 0xFF00) break;
+    offset += 2 + view.getUint16(offset+2,false);
+  }
+  return 1;
+}
+
+function drawOrientedImage(canvas, img, orientation) {
+  const w = img.naturalWidth, h = img.naturalHeight;
+  const swap = orientation >= 5;
+  canvas.width  = swap ? h : w;
+  canvas.height = swap ? w : h;
+  const ctx = canvas.getContext('2d');
+  ctx.save();
+  switch(orientation) {
+    case 2: ctx.transform(-1,0,0,1,w,0); break;
+    case 3: ctx.transform(-1,0,0,-1,w,h); break;
+    case 4: ctx.transform(1,0,0,-1,0,h); break;
+    case 5: ctx.transform(0,1,1,0,0,0); break;
+    case 6: ctx.transform(0,1,-1,0,h,0); break;
+    case 7: ctx.transform(0,-1,-1,0,h,w); break;
+    case 8: ctx.transform(0,-1,1,0,0,w); break;
+  }
+  ctx.drawImage(img,0,0);
+  ctx.restore();
+}
+
+function loadImageToCanvas(src, canvas, fallbackEl) {
+  if (!src) { if(fallbackEl){fallbackEl.style.display='flex';} return; }
+  fetch(src).then(r=>r.arrayBuffer()).then(buf => {
+    const orientation = readExifOrientation(buf);
+    const blob = new Blob([buf]);
+    const url = URL.createObjectURL(blob);
+    const img = new Image();
+    img.onload = () => { drawOrientedImage(canvas, img, orientation); URL.revokeObjectURL(url); };
+    img.onerror = () => { URL.revokeObjectURL(url); if(fallbackEl){canvas.style.display='none';fallbackEl.style.display='flex';} };
+    img.src = url;
+  }).catch(() => { if(fallbackEl){canvas.style.display='none';fallbackEl.style.display='flex';} });
+}
+
+// ── PRODUCT CARDS ──────────────────────────────────────────────
+function productCardHTML(p) {
+  const sub = p['Model/Type'] || p['Brand'] || '—';
+  return `<div class="product-card" onclick="navigate('detail','${safeJS(p['ObjectID'])}')">
+    <div class="card-img-wrap">
+      <canvas id="c-${safeAttr(p['ObjectID'])}" style="width:100%;height:100%;object-fit:cover;display:block"></canvas>
+      <div class="card-img-fallback" style="display:none">${PLACEHOLDER_SVG}</div>
+    </div>
     <div class="card-body">
       <div class="card-id">${p['ObjectID']}</div>
       <div class="card-name">${p['Product (EN)']}</div>
-      <div class="card-designer">${p['Designer']||'—'}</div>
-      ${tags}
+      <div class="card-sub">${sub}</div>
+      <div class="card-tags">
+        ${p['Brand']?`<span class="tag" onclick="event.stopPropagation();navigate('category','brand','${safeJS(p['Brand'])}')">${p['Brand']}</span>`:''}
+        ${p['Era']?`<span class="tag" onclick="event.stopPropagation();navigate('category','era','${safeJS(p['Era'])}')">${p['Era']}</span>`:''}
+        ${p['Country']?`<span class="tag" onclick="event.stopPropagation();setFilter('Country','${safeJS(p['Country'])}')">${p['Country']}</span>`:''}
+      </div>
     </div>
   </div>`;
 }
@@ -358,31 +468,47 @@ function productCardHTML(p, minimal) {
 function renderGrid() {
   const c = document.getElementById('grid-container');
   document.getElementById('result-count').textContent = filteredProducts.length + ' of ' + allProducts.length + ' objects';
-  c.innerHTML = filteredProducts.length
-    ? filteredProducts.map(p=>productCardHTML(p,false)).join('')
-    : '<div class="no-results">No results — try adjusting your search or filters</div>';
-  setTimeout(fixAllImages, 100);
+  if (!filteredProducts.length) { c.innerHTML='<div class="no-results">No results — try adjusting your filters</div>'; return; }
+  c.innerHTML = filteredProducts.map(p=>productCardHTML(p)).join('');
+  // Load images after DOM renders
+  requestAnimationFrame(() => {
+    filteredProducts.forEach(p => {
+      const canvas = document.getElementById('c-' + p['ObjectID']);
+      const fallback = canvas ? canvas.nextElementSibling : null;
+      if (canvas && p['Photo']) loadImageToCanvas(p['Photo'], canvas, fallback);
+      else if (fallback) { if(canvas)canvas.style.display='none'; fallback.style.display='flex'; }
+    });
+  });
 }
 
-// ── PRODUCT DETAIL ────────────────────────────────────────────
-function showDetail(id) {
-  const p = allProducts.find(x=>x['ObjectID']===id); if(!p) return;
-  hideAll(); document.getElementById('detail-view').style.display='block';
-  document.getElementById('breadcrumb-name').textContent = p['Product (EN)'];
-  window.scrollTo(0,0);
+// ── PRODUCT DETAIL ─────────────────────────────────────────────
+function renderDetail(id) {
+  const p = allProducts.find(x=>x['ObjectID']===id);
+  if (!p) { navigate('products'); return; }
 
-  document.getElementById('detail-image-wrap').innerHTML = p['Photo']
-    ? `<img class="detail-image" src="${p['Photo']}" alt="${safeAttr(p['Product (EN)'])}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="detail-image-placeholder" style="display:none">${PLACEHOLDER_SVG}</div>`
-    : `<div class="detail-image-placeholder">${PLACEHOLDER_SVG}</div>`;
+  document.getElementById('detail-breadcrumb').innerHTML =
+    `<a onclick="navigate('products')">← Collection</a><span>/</span><span>${p['Product (EN)']}</span>`;
 
+  const imgWrap = document.getElementById('detail-image-wrap');
+  if (p['Photo']) {
+    imgWrap.innerHTML = `<div class="detail-img-canvas-wrap"><canvas id="detail-canvas"></canvas></div>`;
+    requestAnimationFrame(() => {
+      const canvas = document.getElementById('detail-canvas');
+      if (canvas) loadImageToCanvas(p['Photo'], canvas, null);
+    });
+  } else {
+    imgWrap.innerHTML = `<div class="detail-image-placeholder">${PLACEHOLDER_SVG}</div>`;
+  }
+
+  // Row order: brand, model, designer, era, country, year, colour
   const rows = [
-    ['Designer', p['Designer'], `showCategory('designer','${safeAttr(p['Designer'])}')`],
-    ['Brand',    p['Brand'],    `showCategory('brand','${safeAttr(p['Brand'])}')`],
+    ['Brand',        p['Brand'],      `navigate('category','brand','${safeJS(p['Brand'])}')`],
     ['Model / Type', p['Model/Type'], null],
-    ['Colour',   p['Colour'],   null],
-    ['Year',     p['Year'],     null],
-    ['Era',      p['Era'],      `showCategory('era','${safeAttr(p['Era'])}')`],
-    ['Country',  p['Country'],  null],
+    ['Designer',     p['Designer'],   `navigate('category','designer','${safeJS(p['Designer'])}')`],
+    ['Era',          p['Era'],        `navigate('category','era','${safeJS(p['Era'])}')`],
+    ['Country',      p['Country'],    null],
+    ['Year',         p['Year'],       null],
+    ['Colour',       p['Colour'],     null],
   ];
   const rowsHtml = rows.filter(([,v])=>v).map(([label,val,action])=>`
     <div class="detail-row">
@@ -395,74 +521,83 @@ function showDetail(id) {
     <div class="detail-object-id">${p['ObjectID']}</div>
     <div class="detail-name">${p['Product (EN)']}</div>
     ${p['Model/Type']?`<div class="detail-model">${p['Model/Type']}</div>`:''}
-    ${desc?`<p style="font-size:14px;line-height:1.7;color:var(--ink-mid);margin:1rem 0 1.5rem;">${desc}</p>`:''}
+    ${desc?`<p style="font-size:13px;line-height:1.75;color:var(--ink-mid);margin:1rem 0 1.5rem;">${desc}</p>`:''}
     <div class="detail-table">${rowsHtml}</div>`;
 
   const related = allProducts.filter(x=>x['Brand']===p['Brand']&&x['ObjectID']!==p['ObjectID']).slice(0,4);
-  document.getElementById('related-section').innerHTML = related.length && p['Brand']
-    ? `<div class="related-title">More from ${p['Brand']}</div><div class="product-grid">${related.map(r=>productCardHTML(r,true)).join('')}</div>`
-    : '';
-  setTimeout(fixAllImages, 100);
+  const rs = document.getElementById('related-section');
+  if (related.length && p['Brand']) {
+    rs.innerHTML = `<div class="related-title">More from ${p['Brand']}</div><div class="product-grid">${related.map(r=>productCardHTML(r)).join('')}</div>`;
+    requestAnimationFrame(() => {
+      related.forEach(r => {
+        const canvas = document.getElementById('c-' + r['ObjectID']);
+        const fallback = canvas ? canvas.nextElementSibling : null;
+        if (canvas && r['Photo']) loadImageToCanvas(r['Photo'], canvas, fallback);
+      });
+    });
+  } else { rs.innerHTML = ''; }
 }
 
-// ── CATEGORY VIEW ─────────────────────────────────────────────
-function showCategory(type, name) {
-  if(!name) return;
-  hideAll(); document.getElementById('category-view').style.display='block';
-  window.scrollTo(0,0);
-  document.getElementById('cat-breadcrumb').textContent = name;
+// ── CATEGORY DETAIL (brand/designer/era) ──────────────────────
+function renderCategory(type, name) {
+  document.getElementById('cat-breadcrumb-wrap').innerHTML =
+    `<a onclick="navigate('${type}s')">← ${type.charAt(0).toUpperCase()+type.slice(1)}s</a><span>/</span><span>${name}</span>`;
 
   const products = allProducts.filter(p =>
     type==='brand' ? p['Brand']===name :
-    type==='designer' ? p['Designer']===name :
-    p['Era']===name
-  );
+    type==='designer' ? p['Designer']===name : p['Era']===name);
+  const info = (type==='brand' ? metadata.brands : type==='designer' ? metadata.designers : metadata.eras)[name]||{};
 
-  const info = (type==='brand' ? metadata.brands : type==='designer' ? metadata.designers : metadata.eras)[name] || {};
   let headerHTML = '';
-
   if (type==='era') {
-    headerHTML = `
-      <div class="era-banner">
-        <div>
-          <div class="category-type" style="color:rgba(255,255,255,0.5)">Era</div>
-          <div class="era-banner-label">${name}</div>
-        </div>
-        <div class="era-banner-year">${name}</div>
-      </div>
-      ${info.description
-        ? `<p class="category-desc">${info.description}</p>`
-        : `<p class="category-no-desc">No description yet — add one in eras.json</p>`}`;
+    headerHTML = `<div class="era-banner"><div><div class="category-type" style="color:rgba(255,255,255,0.4)">Era</div><div class="era-banner-label">${name}</div></div><div class="era-banner-year">${name}</div></div>
+      ${info.description?`<p class="category-desc">${info.description}</p>`:`<p class="category-no-desc">No description yet — add one in eras.json</p>`}`;
   } else {
-    const placeholder = type==='designer' ? PERSON_SVG : BRAND_SVG;
+    const ph = type==='designer' ? PERSON_SVG : BRAND_SVG;
     const imgHTML = info.image
-      ? `<img class="category-image" src="${info.image}" alt="${safeAttr(name)}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"><div class="category-image-placeholder" style="display:none">${placeholder}</div>`
-      : `<div class="category-image-placeholder">${placeholder}</div>`;
-    headerHTML = `
-      ${imgHTML}
-      <div class="category-type">${type==='brand'?'Brand':'Designer'}</div>
-      <div class="category-title">${name}</div>
-      ${info.description
-        ? `<p class="category-desc">${info.description}</p>`
-        : `<p class="category-no-desc">No description yet — add one in ${type}s.json</p>`}`;
+      ? `<img class="category-image" src="${safeAttr(info.image)}" alt="${safeAttr(name)}" onerror="this.style.display='none'">`
+      : `<div class="category-image-placeholder">${ph}</div>`;
+    headerHTML = `${imgHTML}<div class="category-type">${type==='brand'?'Brand':'Designer'}</div><div class="category-title">${name}</div>
+      ${info.description?`<p class="category-desc">${info.description}</p>`:`<p class="category-no-desc">No description yet — add one in ${type}s.json</p>`}`;
   }
-
   document.getElementById('cat-header').innerHTML = headerHTML;
-  document.getElementById('cat-grid').innerHTML = products.length
-    ? `<div style="grid-column:1/-1"><div class="category-section-title">${products.length} object${products.length!==1?'s':''} in collection</div></div>`
-      + products.map(p=>productCardHTML(p,true)).join('')
-    : '<div class="no-results">No products found</div>';
+
+  const grid = document.getElementById('cat-grid');
+  if (!products.length) { grid.innerHTML='<div class="no-results">No products found</div>'; return; }
+  grid.innerHTML = `<div style="grid-column:1/-1"><div class="category-section-title">${products.length} object${products.length!==1?'s':''} in collection</div></div>`
+    + products.map(p=>productCardHTML(p)).join('');
+  requestAnimationFrame(() => {
+    products.forEach(p => {
+      const canvas = document.getElementById('c-' + p['ObjectID']);
+      const fallback = canvas ? canvas.nextElementSibling : null;
+      if (canvas && p['Photo']) loadImageToCanvas(p['Photo'], canvas, fallback);
+    });
+  });
 }
 
-// ── NAVIGATION ────────────────────────────────────────────────
-function hideAll() {
-  ['grid-view','detail-view','category-view'].forEach(id=>document.getElementById(id).style.display='none');
-}
-function showGrid() {
-  hideAll(); document.getElementById('grid-view').style.display='block'; window.scrollTo(0,0);
+// ── INDEX PAGES (brands / designers / eras) ───────────────────
+function renderIndex(type) {
+  const keyMap = { brands:'Brand', designers:'Designer', eras:'Era' };
+  const key = keyMap[type];
+  const names = unique(key);
+  const metaObj = type==='brands' ? metadata.brands : type==='designers' ? metadata.designers : metadata.eras;
+  const ph = type==='brands' ? BRAND_SVG : type==='designers' ? PERSON_SVG : ERA_SVG;
+  const catType = type.slice(0,-1); // 'brand','designer','era'
+
+  const grid = document.getElementById(type+'-grid');
+  grid.innerHTML = names.map(name => {
+    const count = allProducts.filter(p=>p[key]===name).length;
+    const info = metaObj[name]||{};
+    const iconHTML = info.image
+      ? `<img src="${safeAttr(info.image)}" alt="${safeAttr(name)}" onerror="this.style.display='none'">`
+      : ph;
+    return `<div class="index-card" onclick="navigate('category','${catType}','${safeJS(name)}')">
+      <div class="index-card-icon">${iconHTML}</div>
+      <div><div class="index-card-name">${name}</div><div class="index-card-count">${count} object${count!==1?'s':''}</div></div>
+    </div>`;
+  }).join('') || '<div class="no-results">No entries found</div>';
 }
 
-window.addEventListener('popstate', showGrid);
 loadData();
 </script>
 </body>
