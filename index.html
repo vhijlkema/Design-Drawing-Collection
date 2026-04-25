@@ -10,7 +10,7 @@
 <style>
   :root {
     --cream: #F5F3EE; --ink: #1A1814; --ink-mid: #5C574E; --ink-light: #9B9589;
-    --border: #E2DDD6; --accent: #FF6062; --accent-light: #FFF0F0; --white: #FFFFFF;
+    --border: #E2DDD6; --accent: #D34D4D; --accent-light: #FDF0F0; --white: #FFFFFF;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   html { scroll-behavior: smooth; }
@@ -18,26 +18,25 @@
 
   /* ── HEADER ── */
   header { background: var(--ink); color: var(--white); position: sticky; top: 0; z-index: 100; }
-  .header-top { padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 68px; border-bottom: 1px solid rgba(255,255,255,0.07); transition: height 0.28s ease, opacity 0.28s ease; overflow: hidden; }
-  .header-brand { display: flex; align-items: baseline; gap: 0; text-decoration: none; cursor: pointer; flex: 1; }
+  .header-top { padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 1px solid rgba(255,255,255,0.07); transition: height 0.28s ease, opacity 0.28s ease, padding 0.28s ease; overflow: hidden; }
+  .header-brand { display: flex; align-items: baseline; cursor: pointer; flex: 1; }
   .header-brand .title { font-weight: 800; font-size: 24px; color: var(--white); letter-spacing: -0.4px; }
-  .header-right { display: flex; align-items: center; gap: 16px; }
+  .header-right { display: flex; align-items: center; }
   .header-meta { font-size: 11px; color: #5A5550; letter-spacing: 0.5px; white-space: nowrap; }
-  .header-meta span { color: #5A5550; }
   .header-meta .sep { margin: 0 6px; }
 
-  .header-nav { display: flex; padding: 0 2.5rem; height: 38px; align-items: center; gap: 4px; }
-  .nav-link { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: #7A7570; text-transform: uppercase; padding: 0 12px; height: 26px; display: flex; align-items: center; cursor: pointer; border-radius: 4px; transition: color 0.15s, background 0.15s; }
-  .nav-link:hover { color: var(--white); background: rgba(255,255,255,0.08); }
-  .nav-link.active { color: var(--ink); background: var(--accent); }
+  /* Nav — full-height flush blocks, no radius, padding matches page-wrap */
+  .header-nav { display: flex; padding: 0 2.5rem; height: 36px; align-items: stretch; gap: 0; }
+  .nav-link { font-size: 11px; font-weight: 700; letter-spacing: 0.8px; color: #7A7570; text-transform: uppercase; padding: 0 14px; display: flex; align-items: center; cursor: pointer; border-radius: 0; transition: color 0.15s, background 0.15s; }
+  .nav-link:hover { color: var(--white); background: rgba(255,255,255,0.07); }
+  .nav-link.active { color: var(--white); background: var(--accent); }
 
-  /* Scrolled-down state */
-  header.scrolled .header-top { height: 0; opacity: 0; pointer-events: none; }
+  /* Scrolled-down: snap instantly to avoid glitch mid-transition */
+  header.scrolled .header-top { height: 0 !important; opacity: 0; pointer-events: none; padding-top: 0; padding-bottom: 0; }
 
   /* ── LAYOUT ── */
   .page-wrap { max-width: 1280px; margin: 0 auto; padding: 2rem 2.5rem 4rem; }
   @media (max-width: 820px) { .page-wrap { padding: 1.5rem 1.25rem 3rem; } .header-top, .header-nav { padding: 0 1.25rem; } }
-
   /* ── CONTROLS ── */
   .controls-bar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; padding-bottom: 1.25rem; border-bottom: 1px solid var(--border); }
   .search-wrap { position: relative; flex: 1; min-width: 200px; }
@@ -114,11 +113,10 @@
   .category-no-desc { font-size: 12px; color: var(--ink-light); font-style: italic; margin-bottom: 2rem; }
   .category-section-title { font-weight: 700; font-size: 15px; margin-bottom: 1rem; padding-top: 1.5rem; border-top: 1px solid var(--border); color: var(--ink-mid); text-transform: uppercase; letter-spacing: 0.5px; }
 
-  /* Era page — clean typographic header, no dark box */
-  .era-header { padding: 2rem 0 1.5rem; border-bottom: 2px solid var(--ink); margin-bottom: 2rem; display: flex; align-items: flex-end; justify-content: space-between; }
-  .era-header-left .era-type { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--ink-light); margin-bottom: 8px; }
-  .era-header-left .era-name { font-weight: 800; font-size: 52px; line-height: 1; color: var(--ink); }
-  .era-header-right .era-dates { font-weight: 700; font-size: 18px; color: var(--accent); }
+  /* Era page — minimal typographic header, no label, no heavy border */
+  .era-header { padding: 2rem 0 1.5rem; margin-bottom: 2rem; display: flex; align-items: baseline; gap: 1.5rem; flex-wrap: wrap; }
+  .era-header .era-name { font-weight: 800; font-size: 52px; line-height: 1; color: var(--ink); }
+  .era-header .era-dates { font-weight: 700; font-size: 20px; color: var(--accent); }
 
   /* ── CATEGORY INDEX PAGES ── */
   .index-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
@@ -455,7 +453,11 @@ function loadImageToCanvas(src, canvas, fallbackEl) {
 
 // ── PRODUCT CARDS ──────────────────────────────────────────────
 function productCardHTML(p) {
-  const sub = p['Model/Type'] || p['Brand'] || '—';
+  const heroTitle = p['Model/Type'] || p['Product (EN)'];
+  const subParts = [];
+  if (p['Model/Type'] && p['Product (EN)']) subParts.push(p['Product (EN)']);
+  if (p['Brand']) subParts.push(p['Brand']);
+  const subLine = subParts.join(' · ') || '—';
   return `<div class="product-card" onclick="navigate('detail','${safeJS(p['ObjectID'])}')">
     <div class="card-img-wrap">
       <canvas id="c-${safeAttr(p['ObjectID'])}" style="width:100%;height:100%;object-fit:cover;display:block"></canvas>
@@ -463,8 +465,8 @@ function productCardHTML(p) {
     </div>
     <div class="card-body">
       <div class="card-id">${p['ObjectID']}</div>
-      <div class="card-name">${p['Product (EN)']}</div>
-      <div class="card-sub">${sub}</div>
+      <div class="card-name">${heroTitle}</div>
+      <div class="card-sub">${subLine}</div>
       <div class="card-tags">
         ${p['Brand']?`<span class="tag" onclick="event.stopPropagation();navigate('category','brand','${safeJS(p['Brand'])}')">${p['Brand']}</span>`:''}
         ${p['Era']?`<span class="tag" onclick="event.stopPropagation();navigate('category','era','${safeJS(p['Era'])}')">${p['Era']}</span>`:''}
@@ -562,11 +564,8 @@ function renderCategory(type, name) {
     const dates = ERA_DATES[name] || '';
     headerHTML = `
       <div class="era-header">
-        <div class="era-header-left">
-          <div class="era-type">Era</div>
-          <div class="era-name">${name}</div>
-        </div>
-        ${dates ? `<div class="era-header-right"><div class="era-dates">${dates}</div></div>` : ''}
+        <div class="era-name">${name}</div>
+        ${dates ? `<div class="era-dates">${dates}</div>` : ''}
       </div>
       ${info.description ? `<p class="category-desc">${info.description}</p>` : `<p class="category-no-desc">No description yet — add one in eras.json</p>`}`;
   } else {
@@ -632,8 +631,12 @@ const ERA_DATES = {
 };
 
 // ── SCROLL-SHRINK HEADER ──────────────────────────────────────
+// Use two thresholds to avoid glitching at the boundary
+const hdr = document.querySelector('header');
 window.addEventListener('scroll', () => {
-  document.querySelector('header').classList.toggle('scrolled', window.scrollY > 60);
+  const y = window.scrollY;
+  if (y > 80) hdr.classList.add('scrolled');
+  else if (y < 20) hdr.classList.remove('scrolled');
 }, { passive: true });
 
 loadData();
