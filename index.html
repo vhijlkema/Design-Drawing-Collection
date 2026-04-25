@@ -20,7 +20,7 @@
   header { background: var(--ink); color: var(--white); position: sticky; top: 0; z-index: 100; }
   .header-top { padding: 0 2.5rem; display: flex; align-items: center; justify-content: space-between; height: 64px; border-bottom: 1px solid rgba(255,255,255,0.07); transition: height 0.28s ease, opacity 0.28s ease, padding 0.28s ease; overflow: hidden; }
   .header-brand { display: flex; align-items: baseline; cursor: pointer; flex: 1; }
-  .header-brand .title { font-weight: 800; font-size: 24px; color: var(--white); letter-spacing: -0.4px; }
+  .header-brand .title { font-weight: 800; font-size: 32px; color: var(--white); letter-spacing: -0.6px; }
   .header-right { display: flex; align-items: center; }
   .header-meta { font-size: 11px; color: #5A5550; letter-spacing: 0.5px; white-space: nowrap; }
   .header-meta .sep { margin: 0 6px; }
@@ -127,7 +127,7 @@
   .index-card-icon svg { width: 18px; height: 18px; opacity: 0.25; }
   .index-card-name { font-weight: 700; font-size: 13px; line-height: 1.2; }
   .index-card-count { font-size: 11px; color: var(--ink-light); margin-top: 2px; }
-  .page-title { font-weight: 800; font-size: 28px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--ink); }
+  .page-title { font-weight: 800; font-size: 28px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--ink); text-transform: uppercase; letter-spacing: 0.5px; }
 
   /* ── MISC ── */
   .empty-state { text-align: center; padding: 5rem 2rem; color: var(--ink-light); }
@@ -488,8 +488,20 @@ function getSortedProducts(products) {
   if (sort === 'views') return arr.sort((a,b) => getViews(b['ObjectID']) - getViews(a['ObjectID']));
   if (sort === 'name')  return arr.sort((a,b) => (a['Product (EN)']||'').localeCompare(b['Product (EN)']||''));
   if (sort === 'id')    return arr.sort((a,b) => (a['ObjectID']||'').localeCompare(b['ObjectID']||''));
-  if (sort === 'year-asc')  return arr.sort((a,b) => parseInt(a['Year']||0) - parseInt(b['Year']||0));
-  if (sort === 'year-desc') return arr.sort((a,b) => parseInt(b['Year']||0) - parseInt(a['Year']||0));
+  if (sort === 'year-asc') return arr.sort((a,b) => {
+    const ya = parseInt(a['Year'])||0, yb = parseInt(b['Year'])||0;
+    if (!ya && !yb) return 0;
+    if (!ya) return 1;  // unknown → end
+    if (!yb) return -1;
+    return ya - yb;
+  });
+  if (sort === 'year-desc') return arr.sort((a,b) => {
+    const ya = parseInt(a['Year'])||0, yb = parseInt(b['Year'])||0;
+    if (!ya && !yb) return 0;
+    if (!ya) return 1;  // unknown → end
+    if (!yb) return -1;
+    return yb - ya;
+  });
   return arr;
 }
 
