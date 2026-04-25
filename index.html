@@ -180,6 +180,13 @@
         <select class="filter-select" id="f-country" onchange="applyFilters()"><option value="">All countries</option></select>
         <button class="filter-clear-x" onclick="clearOne('country')" title="Clear">✕</button>
       </div>
+      <select class="filter-select" id="f-sort" onchange="renderGrid()" style="border-color:var(--border);min-width:130px">
+        <option value="views">Most viewed</option>
+        <option value="name">Name A – Z</option>
+        <option value="id">Object ID</option>
+        <option value="year-asc">Year: oldest first</option>
+        <option value="year-desc">Year: newest first</option>
+      </select>
       <button class="clear-all-btn" onclick="clearFilters()" id="clear-btn" style="display:none">Clear all</button>
     </div>
     <div class="active-chips" id="active-chips"></div>
@@ -392,67 +399,43 @@ function renderChips(f) {
   document.getElementById('active-chips').innerHTML = chips.join('');
 }
 
-// ── IMAGE ROTATION FIX via Canvas ─────────────────────────────
-// Draws JPEG onto canvas with correct EXIF orientation applied.
-function readExifOrientation(buffer) {
-  const view = new DataView(buffer);
-  if (view.getUint16(0,false) !== 0xFFD8) return 1;
-  let offset = 2;
-  while (offset < view.byteLength - 2) {
-    const marker = view.getUint16(offset,false);
-    if (marker === 0xFFE1) {
-      if (view.getUint32(offset+4,false) !== 0x45786966) return 1;
-      const little = view.getUint16(offset+10,false) === 0x4949;
-      const ifdOffset = offset + 10 + view.getUint32(offset+14,little);
-      const numTags = view.getUint16(ifdOffset,little);
-      for (let i=0; i<numTags; i++) {
-        const tagOffset = ifdOffset + 2 + i*12;
-        if (view.getUint16(tagOffset,little) === 0x0112)
-          return view.getUint16(tagOffset+8,little);
-      }
-      return 1;
-    }
-    if ((marker & 0xFF00) !== 0xFF00) break;
-    offset += 2 + view.getUint16(offset+2,false);
-  }
-  return 1;
-}
-
-function drawOrientedImage(canvas, img, orientation) {
-  const w = img.naturalWidth, h = img.naturalHeight;
-  const swap = orientation >= 5;
-  canvas.width  = swap ? h : w;
-  canvas.height = swap ? w : h;
-  const ctx = canvas.getContext('2d');
-  ctx.save();
-  switch(orientation) {
-    case 2: ctx.transform(-1,0,0,1,w,0); break;
-    case 3: ctx.transform(-1,0,0,-1,w,h); break;
-    case 4: ctx.transform(1,0,0,-1,0,h); break;
-    case 5: ctx.transform(0,1,1,0,0,0); break;
-    case 6: ctx.transform(0,1,-1,0,h,0); break;
-    case 7: ctx.transform(0,-1,-1,0,h,w); break;
-    case 8: ctx.transform(0,-1,1,0,0,w); break;
-  }
-  ctx.drawImage(img,0,0);
-  ctx.restore();
-}
-
+// ── IMAGE LOADING — createImageBitmap with imageOrientation ───
+// This avoids CORS/fetch issues and uses the browser's native EXIF handling.
+// Falls back to a plain <img> if createImageBitmap isn't supported.
 function loadImageToCanvas(src, canvas, fallbackEl) {
-  if (!src) { if(fallbackEl){fallbackEl.style.display='flex';} return; }
-  fetch(src).then(r=>r.arrayBuffer()).then(buf => {
-    const orientation = readExifOrientation(buf);
-    const blob = new Blob([buf]);
-    const url = URL.createObjectURL(blob);
-    const img = new Image();
-    img.onload = () => { drawOrientedImage(canvas, img, orientation); URL.revokeObjectURL(url); };
-    img.onerror = () => { URL.revokeObjectURL(url); if(fallbackEl){canvas.style.display='none';fallbackEl.style.display='flex';} };
-    img.src = url;
-  }).catch(() => { if(fallbackEl){canvas.style.display='none';fallbackEl.style.display='flex';} });
+  if (!src) { if (fallbackEl) fallbackEl.style.display = 'flex'; return; }
+  const img = new Image();
+  img.crossOrigin = 'anonymous';
+  img.onload = () => {
+    if (typeof createImageBitmap === 'function') {
+      createImageBitmap(img, { imageOrientation: 'from-image' })
+        .then(bitmap => {
+          canvas.width  = bitmap.width;
+          canvas.height = bitmap.height;
+          canvas.getContext('2d').drawImage(bitmap, 0, 0);
+          bitmap.close();
+        })
+        .catch(() => {
+          // Fallback: draw directly without orientation correction
+          canvas.width  = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          canvas.getContext('2d').drawImage(img, 0, 0);
+        });
+    } else {
+      canvas.width  = img.naturalWidth;
+      canvas.height = img.naturalHeight;
+      canvas.getContext('2d').drawImage(img, 0, 0);
+    }
+  };
+  img.onerror = () => {
+    if (fallbackEl) { canvas.style.display = 'none'; fallbackEl.style.display = 'flex'; }
+  };
+  img.src = src;
 }
 
 // ── PRODUCT CARDS ──────────────────────────────────────────────
-function productCardHTML(p) {
+function productCardHTML(p, ctxPrefix) {
+  const prefix = ctxPrefix || 'g';
   const heroTitle = p['Model/Type'] || p['Product (EN)'];
   const subParts = [];
   if (p['Model/Type'] && p['Product (EN)']) subParts.push(p['Product (EN)']);
@@ -460,7 +443,7 @@ function productCardHTML(p) {
   const subLine = subParts.join(' · ') || '—';
   return `<div class="product-card" onclick="navigate('detail','${safeJS(p['ObjectID'])}')">
     <div class="card-img-wrap">
-      <canvas id="c-${safeAttr(p['ObjectID'])}" style="width:100%;height:100%;object-fit:cover;display:block"></canvas>
+      <canvas id="${prefix}-${safeAttr(p['ObjectID'])}" style="width:100%;height:100%;object-fit:cover;display:block"></canvas>
       <div class="card-img-fallback" style="display:none">${PLACEHOLDER_SVG}</div>
     </div>
     <div class="card-body">
@@ -476,26 +459,54 @@ function productCardHTML(p) {
   </div>`;
 }
 
+function loadCardsImages(products, prefix) {
+  requestAnimationFrame(() => {
+    products.forEach(p => {
+      const canvas = document.getElementById((prefix||'g') + '-' + p['ObjectID']);
+      const fallback = canvas ? canvas.nextElementSibling : null;
+      if (canvas && p['Photo']) loadImageToCanvas(p['Photo'], canvas, fallback);
+      else if (fallback) { if (canvas) canvas.style.display='none'; fallback.style.display='flex'; }
+    });
+  });
+}
+
+// ── VIEW TRACKING ──────────────────────────────────────────────
+function trackView(id) {
+  try {
+    const key = 'views_' + id;
+    localStorage.setItem(key, (parseInt(localStorage.getItem(key)||'0') + 1).toString());
+  } catch(e) {}
+}
+function getViews(id) {
+  try { return parseInt(localStorage.getItem('views_' + id)||'0'); } catch(e) { return 0; }
+}
+
+// ── SORT ───────────────────────────────────────────────────────
+function getSortedProducts(products) {
+  const sort = document.getElementById('f-sort') ? document.getElementById('f-sort').value : 'views';
+  const arr = [...products];
+  if (sort === 'views') return arr.sort((a,b) => getViews(b['ObjectID']) - getViews(a['ObjectID']));
+  if (sort === 'name')  return arr.sort((a,b) => (a['Product (EN)']||'').localeCompare(b['Product (EN)']||''));
+  if (sort === 'id')    return arr.sort((a,b) => (a['ObjectID']||'').localeCompare(b['ObjectID']||''));
+  if (sort === 'year-asc')  return arr.sort((a,b) => parseInt(a['Year']||0) - parseInt(b['Year']||0));
+  if (sort === 'year-desc') return arr.sort((a,b) => parseInt(b['Year']||0) - parseInt(a['Year']||0));
+  return arr;
+}
+
 function renderGrid() {
   const c = document.getElementById('grid-container');
   document.getElementById('result-count').textContent = filteredProducts.length + ' of ' + allProducts.length + ' objects';
   if (!filteredProducts.length) { c.innerHTML='<div class="no-results">No results — try adjusting your filters</div>'; return; }
-  c.innerHTML = filteredProducts.map(p=>productCardHTML(p)).join('');
-  // Load images after DOM renders
-  requestAnimationFrame(() => {
-    filteredProducts.forEach(p => {
-      const canvas = document.getElementById('c-' + p['ObjectID']);
-      const fallback = canvas ? canvas.nextElementSibling : null;
-      if (canvas && p['Photo']) loadImageToCanvas(p['Photo'], canvas, fallback);
-      else if (fallback) { if(canvas)canvas.style.display='none'; fallback.style.display='flex'; }
-    });
-  });
+  const sorted = getSortedProducts(filteredProducts);
+  c.innerHTML = sorted.map(p=>productCardHTML(p,'g')).join('');
+  loadCardsImages(sorted, 'g');
 }
 
 // ── PRODUCT DETAIL ─────────────────────────────────────────────
 function renderDetail(id) {
   const p = allProducts.find(x=>x['ObjectID']===id);
   if (!p) { navigate('products'); return; }
+  trackView(id);
 
   document.getElementById('detail-breadcrumb').innerHTML =
     `<a onclick="navigate('products')">← Collection</a><span>/</span><span>${p['Product (EN)']}</span>`;
@@ -511,7 +522,9 @@ function renderDetail(id) {
     imgWrap.innerHTML = `<div class="detail-image-placeholder">${PLACEHOLDER_SVG}</div>`;
   }
 
-  // Row order: brand, model, designer, era, country, year, colour
+  // Combine Colour + Colour 2 into one display value
+  const colourVal = [p['Colour'], p['Colour 2']].filter(Boolean).join(' · ') || null;
+
   const rows = [
     ['Brand',        p['Brand'],      `navigate('category','brand','${safeJS(p['Brand'])}')`],
     ['Model / Type', p['Model/Type'], null],
@@ -519,7 +532,7 @@ function renderDetail(id) {
     ['Era',          p['Era'],        `navigate('category','era','${safeJS(p['Era'])}')`],
     ['Country',      p['Country'],    null],
     ['Year',         p['Year'],       null],
-    ['Colour',       p['Colour'],     null],
+    ['Colour',       colourVal,       null],
   ];
   const rowsHtml = rows.filter(([,v])=>v).map(([label,val,action])=>`
     <div class="detail-row">
@@ -538,14 +551,8 @@ function renderDetail(id) {
   const related = allProducts.filter(x=>x['Brand']===p['Brand']&&x['ObjectID']!==p['ObjectID']).slice(0,4);
   const rs = document.getElementById('related-section');
   if (related.length && p['Brand']) {
-    rs.innerHTML = `<div class="related-title">More from ${p['Brand']}</div><div class="product-grid">${related.map(r=>productCardHTML(r)).join('')}</div>`;
-    requestAnimationFrame(() => {
-      related.forEach(r => {
-        const canvas = document.getElementById('c-' + r['ObjectID']);
-        const fallback = canvas ? canvas.nextElementSibling : null;
-        if (canvas && r['Photo']) loadImageToCanvas(r['Photo'], canvas, fallback);
-      });
-    });
+    rs.innerHTML = `<div class="related-title">More from ${p['Brand']}</div><div class="product-grid">${related.map(r=>productCardHTML(r,'r')).join('')}</div>`;
+    loadCardsImages(related, 'r');
   } else { rs.innerHTML = ''; }
 }
 
@@ -581,14 +588,8 @@ function renderCategory(type, name) {
   const grid = document.getElementById('cat-grid');
   if (!products.length) { grid.innerHTML='<div class="no-results">No products found</div>'; return; }
   grid.innerHTML = `<div style="grid-column:1/-1"><div class="category-section-title">${products.length} object${products.length!==1?'s':''} in collection</div></div>`
-    + products.map(p=>productCardHTML(p)).join('');
-  requestAnimationFrame(() => {
-    products.forEach(p => {
-      const canvas = document.getElementById('c-' + p['ObjectID']);
-      const fallback = canvas ? canvas.nextElementSibling : null;
-      if (canvas && p['Photo']) loadImageToCanvas(p['Photo'], canvas, fallback);
-    });
-  });
+    + products.map(p=>productCardHTML(p,'cat')).join('');
+  loadCardsImages(products, 'cat');
 }
 
 // ── INDEX PAGES (brands / designers / eras) ───────────────────
