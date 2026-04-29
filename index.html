@@ -130,12 +130,10 @@
   .page-title { font-weight: 800; font-size: 28px; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 2px solid var(--ink); text-transform: uppercase; letter-spacing: 0.5px; }
 
   /* ── DRAWING TOPICS ── */
-  /* Badges on product detail page — visually distinct from metadata */
   .topics-section { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid var(--border); }
   .topics-label { font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase; color: var(--ink-light); margin-bottom: 10px; }
-  .topic-badge { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 4px; background: var(--ink); color: var(--white); cursor: pointer; transition: background 0.15s; white-space: nowrap; border: none; }
+  .topic-badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 700; padding: 5px 10px; border-radius: 4px; background: var(--ink); color: var(--white); cursor: pointer; transition: background 0.15s; white-space: nowrap; border: none; }
   .topic-badge:hover { background: #2E2A26; }
-  .topic-badge .topic-icon { font-size: 13px; line-height: 1; }
   .topic-badges-wrap { display: flex; gap: 6px; flex-wrap: wrap; }
 
   /* Topic tag on grid cards */
@@ -144,20 +142,22 @@
 
   /* ── TOPICS PAGE ── */
   .topics-intro { font-size: 14px; color: var(--ink-mid); max-width: 620px; margin-bottom: 2rem; line-height: 1.7; }
-  .topics-filter-row { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 0.75rem; }
-  .topic-toggle { display: inline-flex; align-items: center; gap: 7px; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 4px; border: 1.5px solid var(--border); background: var(--white); color: var(--ink-mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
-  .topic-toggle .t-icon { font-size: 15px; line-height: 1; }
+  .topics-group { margin-bottom: 1rem; }
+  .topics-group-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-light); margin-bottom: 8px; }
+  .topics-filter-row { display: flex; gap: 8px; flex-wrap: wrap; }
+  .topic-toggle { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 700; padding: 7px 14px; border-radius: 4px; border: 1.5px solid var(--border); background: var(--white); color: var(--ink-mid); cursor: pointer; transition: all 0.15s; white-space: nowrap; }
   .topic-toggle:hover { border-color: var(--ink); color: var(--ink); }
   .topic-toggle.selected { background: var(--ink); color: var(--white); border-color: var(--ink); }
-  .topic-toggle .t-count { font-size: 10px; font-weight: 600; opacity: 0.6; margin-left: 2px; }
-  .topics-results-info { font-size: 12px; color: var(--ink-light); margin: 1rem 0 1.25rem; min-height: 18px; }
+  .topic-toggle .t-count { font-size: 10px; font-weight: 600; opacity: 0.55; margin-left: 4px; }
+  .topics-results-info { font-size: 12px; color: var(--ink-light); margin: 1.25rem 0 1.25rem; min-height: 18px; }
   .topics-clear { font-size: 11px; font-weight: 700; color: var(--accent); cursor: pointer; margin-left: 8px; }
   .topics-clear:hover { text-decoration: underline; }
 
-  /* Topic detail card (definition on Topics page) */
-  .topic-def-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 2.5rem; }
-  .topic-def-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 1.25rem; }
-  .topic-def-icon { font-size: 24px; margin-bottom: 8px; }
+  /* Topic definition cards */
+  .topic-def-section-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--ink-light); margin: 2rem 0 0.75rem; }
+  .topic-def-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; margin-bottom: 0.5rem; }
+  .topic-def-card { background: var(--white); border: 1px solid var(--border); border-radius: 6px; padding: 1.25rem; cursor: pointer; transition: border-color 0.15s; }
+  .topic-def-card:hover { border-color: var(--ink-mid); }
   .topic-def-name { font-weight: 800; font-size: 14px; margin-bottom: 6px; }
   .topic-def-desc { font-size: 12px; color: var(--ink-mid); line-height: 1.6; }
   .empty-state { text-align: center; padding: 5rem 2rem; color: var(--ink-light); }
@@ -484,7 +484,7 @@ function productCardHTML(p, ctxPrefix) {
   const subLine = subParts.join(' · ') || '—';
   const topics = getProductTopics(p);
   const topicTagsHTML = topics.length ? topics.map(t =>
-    `<span class="tag-topic" onclick="event.stopPropagation();selectedTopics.clear();selectedTopics.add('${safeJS(t)}');navigate('topics')">${DRAWING_TOPICS[t]?DRAWING_TOPICS[t].icon+' ':''} ${t}</span>`
+    `<span class="tag-topic" onclick="event.stopPropagation();selectedTopics.clear();selectedTopics.add('${safeJS(t)}');navigate('topics')">${t}</span>`
   ).join('') : '';
 
   return `<div class="product-card" onclick="navigate('detail','${safeJS(p['ObjectID'])}')">
@@ -606,9 +606,7 @@ function renderDetail(id) {
       <div class="topics-label">Drawing Topics</div>
       <div class="topic-badges-wrap">${topics.map(t => {
         const td = DRAWING_TOPICS[t] || {};
-        return `<button class="topic-badge" onclick="selectedTopics.clear();selectedTopics.add('${safeJS(t)}');navigate('topics')" title="${td.short||t}">
-          <span class="topic-icon">${td.icon||''}</span>${t}
-        </button>`;
+        return `<button class="topic-badge" onclick="selectedTopics.clear();selectedTopics.add('${safeJS(t)}');navigate('topics')" title="${td.short||t}">${t}</button>`;
       }).join('')}</div>
     </div>` : '';
 
@@ -694,47 +692,43 @@ function renderIndex(type) {
   }).join('') || '<div class="no-results">No entries found</div>';
 }
 
-// ── DRAWING TOPICS ─────────────────────────────────────────────
+const TOPIC_GROUPS = {
+  'Form': ['Block Shapes', 'Cylindrical Shapes', 'Singular Rounding', 'Multiple Roundings'],
+  'Material & Surface': ['Matt Surfaces', 'Glossy Surfaces', 'Chrome', 'Transparent Materials'],
+};
+
 const DRAWING_TOPICS = {
   'Block Shapes': {
-    icon: '⬛',
     short: 'Rectangular/boxy products with little rounding',
     desc: 'Block-shaped products are fundamental to learning two-point perspective. The challenge is to keep convergence subtle — vanishing points should be placed 4–5 times the product\'s width apart, giving a natural, slightly flat perspective typical of consumer product drawings. Clean parallel lines, controlled foreshortening, and crisp shading on flat planes are the core skills practised here. Cast shadows extend along the perspective grid, reinforcing spatial depth.'
   },
   'Cylindrical Shapes': {
-    icon: '⭕',
     short: 'Dominant cylindrical or tubular forms',
-    desc: 'Cylinders are among the most frequently occurring forms in product design — from handles to housings to bottles. Drawing them accurately requires mastering the ellipse: the long axis is always perpendicular to the rotation axis, and the ellipse opens wider (less foreshortened) as it moves away from eye level. Vertical cylinders demand consistent ellipse proportions top and bottom; horizontal cylinders introduce foreshortening along their length. Shading follows the curvature with a smooth gradient, and the highlight is a sharp, narrow strip along the form.'
+    desc: 'Cylinders are among the most frequently occurring forms in product design — from handles to housings to bottles. Drawing them accurately requires mastering the ellipse: the long axis is always perpendicular to the rotation axis, and the ellipse opens wider as it moves away from eye level. Vertical cylinders demand consistent ellipse proportions top and bottom; horizontal cylinders introduce foreshortening along their length. Shading follows the curvature with a smooth gradient, and the highlight is a sharp, narrow strip along the form.'
   },
   'Singular Rounding': {
-    icon: '◗',
     short: 'One dominant curved edge or corner radius',
-    desc: 'A singular rounding — one large, consistent radius — transforms a block form into something more refined and ergonomic. In perspective, the rounding is constructed from the underlying block: the curved corner is part of an ellipse whose radius equals the rounding. The key skill is keeping this radius geometrically consistent across all visible corners. Shading transitions smoothly across the curved face, unlike the sharp shadow boundary on a flat plane. Products with a single dominant rounding are ideal for understanding how curvature modifies light and shadow.'
+    desc: 'A singular rounding — one large, consistent radius — transforms a block form into something more refined. In perspective, the curved corner is part of an ellipse whose radius equals the rounding. The key skill is keeping this radius geometrically consistent across all visible corners. Shading transitions smoothly across the curved face, unlike the sharp shadow boundary on a flat plane. Products with a single dominant rounding are ideal for understanding how curvature modifies light and shadow.'
   },
   'Multiple Roundings': {
-    icon: '◎',
     short: 'Several different radii on one product',
-    desc: 'Products with multiple roundings — a large primary radius combined with smaller secondary and tertiary radii — represent the majority of real consumer products. Each radius must be constructed individually in perspective, with the larger radii reading as wider ellipses and smaller radii appearing tighter. The transition between different radii creates subtle shifts in the shading gradient, which is what gives a product drawing its three-dimensional credibility. Pastel chalk or marker blending over pencil framework is the recommended technique for achieving these smooth tonal transitions.'
+    desc: 'Products with multiple roundings — a large primary radius combined with smaller secondary and tertiary radii — represent the majority of real consumer products. Each radius must be constructed individually in perspective. The transition between different radii creates subtle shifts in the shading gradient, which gives a drawing its three-dimensional credibility. Pastel chalk or marker blending over pencil framework is the recommended technique for achieving smooth tonal transitions.'
   },
   'Matt Surfaces': {
-    icon: '▣',
     short: 'Low-contrast diffuse materials',
-    desc: 'Matt surfaces — plastics, painted metals, rubber, fabric — reflect light diffusely, creating gentle, low-contrast gradients without sharp highlights. The shading transitions gradually from light face to dark face, with a soft cast shadow that has a relatively clear edge. Colour marker applied in overlapping strokes is the primary tool, with pastel chalk used to blend and soften gradients. Understanding matt materials is foundational: they reveal the form\'s geometry most clearly, without the visual complexity of reflections or transparency.'
+    desc: 'Matt surfaces — plastics, painted metals, rubber, fabric — reflect light diffusely, creating gentle, low-contrast gradients without sharp highlights. The shading transitions gradually from light to dark, with a soft cast shadow. Colour marker applied in overlapping strokes is the primary tool, with pastel chalk used to blend and soften gradients. Understanding matt materials is foundational: they reveal the form\'s geometry most clearly, without the visual complexity of reflections.'
   },
   'Glossy Surfaces': {
-    icon: '✦',
     short: 'High-contrast shiny plastics and lacquered surfaces',
-    desc: 'Glossy surfaces dramatically compress the tonal range: the light zone is very bright (often left as white paper), the transition to shadow is rapid, and the shadow zone is dark. A sharp, specular highlight — a bright strip following the form\'s curvature — is the defining characteristic. Below the highlight, a subtle reflected light often brightens the edge of the dark zone. Colour saturation is highest in the mid-tones. Glossy products require careful planning of the highlight position relative to the assumed light source, and confident, decisive marker application.'
+    desc: 'Glossy surfaces dramatically compress the tonal range: the light zone is very bright (often left as white paper), the transition to shadow is rapid, and the shadow zone is dark. A sharp, specular highlight following the form\'s curvature is the defining characteristic. Colour saturation is highest in the mid-tones. Glossy products require careful planning of the highlight position relative to the light source, and confident, decisive marker application.'
   },
   'Chrome': {
-    icon: '◈',
     short: 'Highly reflective metal surfaces',
-    desc: 'Chrome and polished metal surfaces are the most demanding material to draw. They are essentially mirrors: the surface reflects its entire environment, creating extreme contrast, near-black darks adjacent to near-white lights, and environment-derived colour in the reflections. The classic chrome rendering shows a dark band along the centre of a cylindrical form, bright highlights at the edges, and a strong reflection of the ground plane near the base. Chrome is typically rendered in graphite or cool grey markers, with sharp white highlights added last using a white gel pen or correction fluid.'
+    desc: 'Chrome and polished metal surfaces are the most demanding material to draw — they are essentially mirrors. The surface reflects its entire environment, creating extreme contrast, near-black darks adjacent to near-white lights. The classic chrome rendering shows a dark band along the centre of a cylindrical form, bright highlights at the edges, and a strong ground-plane reflection near the base. Typically rendered in graphite or cool grey markers, with white gel pen highlights added last.'
   },
   'Transparent Materials': {
-    icon: '◇',
     short: 'Glass or clear plastic components',
-    desc: 'Transparent materials — glass, acrylic, clear polycarbonate — combine three optical phenomena: transparency (you see through them), reflection (they mirror their environment), and refraction (objects seen through them appear displaced or distorted). In product drawing, the technique is to draw the structure and contents visible through the material, then overlay a controlled reflection and a subtle tinted cast shadow. The edges of glass objects are typically rendered dark (they are optically dense at steep angles), while the central faces remain light and clean. Transparent components create strong visual interest and are common in packaging, electronics, and laboratory equipment.'
+    desc: 'Transparent materials — glass, acrylic, clear polycarbonate — combine transparency, reflection, and refraction. In product drawing, you draw the structure and contents visible through the material, then overlay a controlled reflection and a subtle tinted cast shadow. The edges of glass objects are rendered dark (optically dense at steep angles), while the central faces remain light and clean. Common in packaging, electronics, and laboratory equipment.'
   }
 };
 
@@ -748,19 +742,18 @@ function getProductTopics(p) {
 
 // ── TOPICS PAGE ────────────────────────────────────────────────
 function renderTopicsPage() {
-  const topicNames = Object.keys(DRAWING_TOPICS);
-
-  // Build toggle buttons
   const togglesEl = document.getElementById('topic-toggles');
-  togglesEl.innerHTML = topicNames.map(name => {
-    const count = allProducts.filter(p => getProductTopics(p).includes(name)).length;
-    const sel = selectedTopics.has(name) ? 'selected' : '';
-    return `<button class="topic-toggle ${sel}" onclick="toggleTopic('${name}')">
-      <span class="t-icon">${DRAWING_TOPICS[name].icon}</span>
-      ${name}
-      <span class="t-count">${count}</span>
-    </button>`;
-  }).join('');
+  togglesEl.innerHTML = Object.entries(TOPIC_GROUPS).map(([groupName, topics]) => `
+    <div class="topics-group">
+      <div class="topics-group-label">${groupName}</div>
+      <div class="topics-filter-row">${topics.map(name => {
+        const count = allProducts.filter(p => getProductTopics(p).includes(name)).length;
+        const sel = selectedTopics.has(name) ? 'selected' : '';
+        return `<button class="topic-toggle ${sel}" onclick="toggleTopic('${safeJS(name)}')">
+          ${name}<span class="t-count">${count}</span>
+        </button>`;
+      }).join('')}</div>
+    </div>`).join('');
 
   renderTopicsGrid();
 }
@@ -776,20 +769,22 @@ function renderTopicsGrid() {
   const infoEl = document.getElementById('topics-results-info');
 
   if (selectedTopics.size === 0) {
-    // Show topic definition cards when nothing selected
     infoEl.innerHTML = 'Select one or more topics above to browse matching products.';
-    grid.innerHTML = `<div style="grid-column:1/-1"><div class="topic-def-grid">${
-      Object.entries(DRAWING_TOPICS).map(([name, t]) => `
-        <div class="topic-def-card">
-          <div class="topic-def-icon">${t.icon}</div>
-          <div class="topic-def-name">${name}</div>
-          <div class="topic-def-desc">${t.desc}</div>
-        </div>`).join('')
-    }</div></div>`;
+    // Show definition cards split by group
+    grid.innerHTML = `<div style="grid-column:1/-1">${
+      Object.entries(TOPIC_GROUPS).map(([groupName, topics]) => `
+        <div class="topic-def-section-label">${groupName}</div>
+        <div class="topic-def-grid">${topics.map(name => {
+          const t = DRAWING_TOPICS[name];
+          return `<div class="topic-def-card" onclick="toggleTopic('${safeJS(name)}');renderTopicsPage()">
+            <div class="topic-def-name">${name}</div>
+            <div class="topic-def-desc">${t.desc}</div>
+          </div>`;
+        }).join('')}</div>`).join('')
+    }</div>`;
     return;
   }
 
-  // Filter products matching ALL selected topics (AND logic)
   const selected = [...selectedTopics];
   const matching = allProducts.filter(p => {
     const pt = getProductTopics(p);
